@@ -5,7 +5,10 @@ description = "Add your description here"
 authors = [{ name = "wens.li", email = "wens.li@tmnewa.com.tw" }]
 requires-python = ">=3.13"
 readme = "README.md"
-dependencies = []
+dependencies = [
+    "fastapi>=0.159.1",
+    "uvicorn>=0.54.0",
+]
 
 [project.scripts]
 php-mirage-honeypot = "php_mirage_honeypot:main"
