@@ -1,9 +1,9 @@
-FROM python:3.12-slim
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy PATH="/app/.venv/bin:$PATH"
 WORKDIR /app
 RUN groupadd --system app && useradd --system --gid app app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-dev --no-install-project
 COPY main.py .
 USER app
 ENV PORT=8080
