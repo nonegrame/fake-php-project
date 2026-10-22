@@ -30,12 +30,19 @@ gcloud run services delete php-mirage-honeypot --region asia-east1
 
 ### What is simulated
 
-- `/`: WordPress-like homepage
-- `/wp-login.php`: decoy login form; **credentials are never recorded**
-- `/phpinfo.php`: fake PHP information
-- `/diagnostic.php?cmd=id`: static, allowlisted shell-like output; never execute input
+- `/`: WordPress-like homepage (theme CSS, RSS link, post list, footer)
+- `/wp-login.php`: WordPress-style login form; POST returns a generic error; **credentials are never recorded**
+- `/phpinfo.php`: fake PHP information (build date, php.ini paths, memory/upload limits)
+- `/diagnostic.php?cmd=...`: shell-like decoy, never executes input
+  - Static allowlist: `id`, `whoami`, `hostname`, `uname -a`; everything else returns `sh: command not found`
+  - Stateful fake filesystem via a `mirage_cwd` cookie (httponly, samesite=lax): `pwd`, `cd`, `ls` (`-a` shows dotfiles), `cat`
+  - Fake WordPress install under `/var/www/html` (`wp-config.php`, `wp-content/`, `wp-admin/`, ...) and `/etc` (`passwd`, `hosts`, `os-release`); `/etc/shadow` returns `Permission denied`
+  - Cookie is not signed; the server only accepts cwd values that exist as directories in the fake filesystem, so tampering just resets to `/var/www/html`
 - `/xmlrpc.php`: simulated endpoint
-- `/.env`, `/.git/config`, `/wp-config.php`: fake forbidden responses
+- `/.env`, `/.git/config`: Apache-style 403 page
+- `/wp-config.php`: empty 200 response, as if PHP executed the file
+- Other unknown paths: Apache-style 404 page
+- All secrets, salts and passwords are fake and derived from a fixed seed, so every instance serves the same values
 
 ### Limitations and cautions
 
