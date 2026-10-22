@@ -1,0 +1,18 @@
+[project]
+name = "php-mirage-honeypot"
+version = "0.1.0"
+description = "Add your description here"
+authors = [{ name = "wens.li", email = "wens.li@tmnewa.com.tw" }]
+requires-python = ">=3.13"
+readme = "README.md"
+dependencies = []
+
+[project.scripts]
+php-mirage-honeypot = "php_mirage_honeypot:main"
+
+[tool.uv]
+package = false
+
+[build-system]
+requires = ["uv_build>=0.12.22,<0.13.0"]
+build-backend = "uv_build"
